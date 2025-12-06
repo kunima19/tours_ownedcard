@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>1stロケテスト所持状況</title>
+    <style>
+        body {
+            font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+            background: linear-gradient(to bottom right, #fdfdfd, #f4f6fa);
+            padding: 20px;
+            color: #333;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            width: 150px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .card img {
+            width: 100%;
+            border-radius: 6px;
+        }
+        .card p {
+            margin-top: 6px;
+            font-size: 11px;
+            line-height: 1.3em;
+            word-wrap: break-word;
+            white-space: normal;
+            color: #444;
+        }
+        /* ====== フィルター枠 ====== */
+        .filter-box {
+            margin-bottom: 15px;
+            padding: 15px 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .filter-box strong {
+            color: #333;
+        }
+        button {
+            margin-right: 8px;
+            padding: 5px 10px;
+            font-size: 13px;
+            background: #ff74b8;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #ff74b85c;
+        }
+        button:active {
+            background: #ff74b85c;
+        }
+        #nameSearch {
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 13px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #nameSearch:focus {
+            border-color: #ff74b8;
+            box-shadow: 0 0 4px #ff74b8;
+            outline: none;
+        }
+        /* ====== 所持率カウンター ====== */
+        #ownedCount {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            text-align: right;
+            font-size: 22px;
+            line-height: 1.3em;
+            color: #222;
+        }
+        #ownedPercent {
+            font-weight: bold;
+            font-size: 28px;
+            color: #ff74b8;
+        }
+        #ownedText {
+            font-size: 17px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>1stロケテスト</h1>
+    <!--===== 検索フィルタ =====-->
+    <div class="filter-box">
+        <strong>カード番号・カード名検索</strong><br>
+        <input type="text" id="nameSearch" placeholder="例：IMT-LT-001 アテンダントツアラー" style="width:250px;">
+        <br><br>
+
+        <strong>レアリティ絞り込み</strong><br>
+        <label><input type="checkbox" class="rare" value="SSR"> SSR</label>
+        <label><input type="checkbox" class="rare" value="SR"> SR</label>
+        <label><input type="checkbox" class="rare" value="R"> R</label>
+        <label><input type="checkbox" class="rare" value="N"> N</label>
+        <br><br>
+
+        <strong>種類で絞り込み</strong><br>
+        <label><input type="checkbox" class="genre" value="costume"> コスチューム</label>
+        <label><input type="checkbox" class="genre" value="accessory"> アクセサリー</label>
+        <label><input type="checkbox" class="genre" value="support"> サポート</label>
+        <label><input type="checkbox" class="genre" value="appeal"> SPアピール</label>
+        <br><br>
+
+        <strong>アイドル絞り込み</strong><br>
+        <label><input type="checkbox" class="idol" value="天海春香"> 天海春香</label>
+        <label><input type="checkbox" class="idol" value="如月千早"> 如月千早</label>
+        <label><input type="checkbox" class="idol" value="星井美希"> 星井美希</label><br>
+        <label><input type="checkbox" class="idol" value="島村卯月"> 島村卯月</label>
+        <label><input type="checkbox" class="idol" value="渋谷凛"> 渋谷凛　</label>
+        <label><input type="checkbox" class="idol" value="本田未央"> 本田未央</label><br>
+        <label><input type="checkbox" class="idol" value="春日未来"> 春日未来</label>
+        <label><input type="checkbox" class="idol" value="最上静香"> 最上静香</label>
+        <label><input type="checkbox" class="idol" value="伊吹翼"> 伊吹翼</label><br>
+        <label><input type="checkbox" class="idol" value="櫻木真乃"> 櫻木真乃</label>
+        <label><input type="checkbox" class="idol" value="風野灯織"> 風野灯織</label>
+        <label><input type="checkbox" class="idol" value="八宮めぐる"> 八宮めぐる</label>
+        <br><br>
+
+        <strong>所持状況</strong><br>
+        <button id="btnAll">カード全表示</button>
+        <button id="btnOwned">所持済みカードのみ表示</button>
+        <button id="btnUnowned">未所持カードのみ表示</button>
+
+        <div id="ownedCount" style="
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            text-align: right;
+            font-size: 25px;
+            line-height: 1.3em;
+        ">
+            <div id="ownedPercent" style="font-weight:bold; font-size:30px;"></div>
+            <div id="ownedText"></div>
+        </div>
+
+    </div>
+
+    <div class="card-container" id="cardArea"></div>
+
+    <script>
+        const cards = [
+            {no:"IMT-LT-001",name:"アテンダントツアラー",rare:"SSR",genre:"costume",idol:"天海春香",owned:false},
+            {no:"IMT-LT-002",name:"アテンダントツアラー",rare:"SSR",genre:"costume",idol:"天海春香",owned:false},
+            {no:"IMT-LT-003",name:"ディープワイヤード",rare:"R",genre:"costume",idol:"風野灯織",owned:true},
+            {no:"IMT-LT-004",name:"オリエンタルクロシズ",rare:"R",genre:"costume",idol:"本田未央",owned:true},
+            {no:"IMT-LT-005",name:"眼帯 (黒)",rare:"R",genre:"accessory",idol:"天海春香",owned:true},
+            {no:"IMT-LT-006",name:"ブライトブレスレット",rare:"R",genre:"accessory",idol:"渋谷凛",owned:true},
+            {no:"IMT-LT-007",name:"ブライトアンクレット",rare:"R",genre:"accessory",idol:"八宮めぐる",owned:true},
+            {no:"IMT-LT-008",name:"お姫さまティアラ",rare:"N",genre:"accessory",idol:"春日未来",owned:true},
+            {no:"IMT-LT-009",name:"悪魔の角",rare:"N",genre:"accessory",idol:"最上静香",owned:true},
+            {no:"IMT-LT-010",name:"悪魔の羽",rare:"N",genre:"accessory",idol:"星井美希",owned:true},
+            {no:"IMT-LT-011",name:"悪魔の尻尾",rare:"N",genre:"accessory",idol:"櫻木真乃",owned:true},
+            {no:"IMT-LT-012",name:"ねこみみ (白)",rare:"N",genre:"accessory",idol:"島村卯月",owned:true},
+            {no:"IMT-LT-013",name:"ねこしっぽ (白)",rare:"N",genre:"accessory",idol:"如月千早",owned:true},
+            {no:"IMT-LT-014",name:"ねこみみ (三毛)",rare:"N",genre:"accessory",idol:"風野灯織",owned:true},
+            {no:"IMT-LT-015",name:"ねこしっぽ (三毛)",rare:"N",genre:"accessory",idol:"伊吹翼",owned:true},
+            {no:"IMT-LT-016",name:"all you've got",rare:"SSR",genre:"support",idol:"渋谷凛",owned:false},
+            {no:"IMT-LT-017",name:"glittering essence",rare:"SR",genre:"support",idol:"星井美希",owned:true},
+            {no:"IMT-LT-018",name:"お腹ぺこぺこ～！",rare:"SR",genre:"support",idol:"伊吹翼",owned:true},
+            {no:"IMT-LT-019",name:"ブライトスマイル",rare:"R",genre:"support",idol:"島村卯月",owned:true},
+            {no:"IMT-LT-020",name:"二人だけのプライベートレッスン",rare:"R",genre:"support",idol:"如月千早",owned:true},
+            {no:"IMT-LT-021",name:"二人だけのプライベートレッスン",rare:"R",genre:"support",idol:"最上静香",owned:true},
+            {no:"IMT-LT-022",name:"ライブサポート",rare:"N",genre:"support",idol:"天海春香",owned:true},
+            {no:"IMT-LT-023",name:"ライブサポート",rare:"N",genre:"support",idol:"櫻木真乃",owned:true},
+            {no:"IMT-LT-024",name:"ライブサポート",rare:"N",genre:"support",idol:"本田未央",owned:true},
+            {no:"IMT-LT-025",name:"ライブサポート",rare:"N",genre:"support",idol:"渋谷凛",owned:true},
+            {no:"IMT-LT-026",name:"ライブサポート",rare:"N",genre:"support",idol:"風野灯織",owned:true},
+            {no:"IMT-LT-027",name:"パーティータイム",rare:"SR",genre:"appeal",idol:"八宮めぐる",owned:true},
+            {no:"IMT-LT-028",name:"トリオザベスト",rare:"SR",genre:"appeal",idol:"春日未来",owned:true},
+            {no:"IMT-LT-029",name:"Buddy☆Bang",rare:"R",genre:"appeal",idol:"星井美希",owned:true},
+        ];
+
+        let ownedFilter = null;
+
+        function displayCards() {
+            const area = document.getElementById("cardArea");
+            area.innerHTML = "";
+
+            const keyword = document.getElementById("nameSearch").value.toLowerCase();
+            const rareChecks  = [...document.querySelectorAll(".rare:checked")].map(c => c.value);
+            const genreChecks = [...document.querySelectorAll(".genre:checked")].map(c => c.value);
+            const idolChecks  = [...document.querySelectorAll(".idol:checked")].map(c => c.value);
+
+            cards.forEach(card => {
+                if (keyword !== "") {
+                    const target = (card.no + " " + card.name).toLowerCase();
+                    if (!target.includes(keyword)) return;
+                }
+                if (rareChecks.length > 0 && !rareChecks.includes(card.rare)) return;
+                if (genreChecks.length > 0 && !genreChecks.includes(card.genre)) return;
+                if (idolChecks.length > 0 && !idolChecks.includes(card.idol)) return;
+                if (ownedFilter !== null && card.owned !== ownedFilter) return;
+
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "card";
+
+                const img = document.createElement("img");
+
+                let imgName = "";
+                if (card.rare === "SSR") imgName = "ssr";
+                else if (card.rare === "SR") imgName = "sr";
+                else if (card.rare === "R") imgName = "r";
+                else imgName = "n";
+
+                if (card.owned) imgName += "_owned";
+
+                img.src = `img/${imgName}.png`;
+
+                const name = document.createElement("p");
+                name.innerText = `${card.no}\n${card.name}\n（${card.idol}）`;
+
+                cardDiv.appendChild(img);
+                cardDiv.appendChild(name);
+                area.appendChild(cardDiv);
+            });
+            updateOwnedCount();
+        }
+
+        document.getElementById("nameSearch").addEventListener("keyup", displayCards);
+        document.querySelectorAll(".rare, .genre, .idol")
+            .forEach(check => check.addEventListener("change", displayCards));
+
+        document.getElementById("btnOwned").addEventListener("click", () => { ownedFilter = true; displayCards(); });
+        document.getElementById("btnUnowned").addEventListener("click", () => { ownedFilter = false; displayCards(); });
+        document.getElementById("btnAll").addEventListener("click", () => { ownedFilter = null; displayCards(); });
+
+        displayCards();
+        function updateOwnedCount() {
+        const total = cards.length;
+        const owned = cards.filter(c => c.owned).length;
+        const percent = ((owned / total) * 100).toFixed(1);
+        document.getElementById("ownedPercent").innerText = `${percent}%`;
+        document.getElementById("ownedText").innerText = `${owned}枚／${total}枚`;
+        }
+    </script>
+</body>
+</html>

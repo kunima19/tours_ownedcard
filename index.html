@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>THE iDOLM@STER TOURS 所持済みカード</title>
+  <style>
+    body {
+      background-color: #000;
+      margin: 0;
+      padding: 40px;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 40px;
+    }
+
+    .column {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 600px;
+    }
+
+    .column-left {
+      margin-right: 20px;
+    }
+
+    .column-right {
+      margin-left: 20px;
+    }
+
+    .divider {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      font-size: 2em;
+      color: #fff;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .card {
+      text-align: center;
+    }
+
+    .card img {
+      width: 100%;
+      max-width: 120px;
+      height: auto;
+      border-radius: 0;
+      box-shadow: 0 2px 6px rgba(255, 255, 255, 0.2);
+      transition: transform 0.2s ease;
+      outline: 1px solid rgba(255, 255, 255, 0.5);
+      outline-offset: 3px;
+    }
+
+    .card img:hover {
+      transform: scale(1.05);
+    }
+
+    .caption {
+      font-size: 0.85em;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="column column-left">
+      <!-- 左側カード12枚 -->
+      <div class="card"><a href="00_first_location_test.html"><img src="img/00_LT.png"></a><div class="caption"></div></div>
+      <div class="card"><a href="00_second_location_test.html"><img src="img/00_LT2.png"></a><div class="caption"></div></div>
+      <div class="card"><a href="01_first.html"><img src="img/01.png"></a><div class="caption"></div></div>
+      <div class="card"><a href="02_second.html"><img src="img/02.png"></a><div class="caption"></div></div>
+      <div class="card"><a href="03_third.html"><img src="img/03_(仮).png"></a><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+    </div>
+
+    <div class="divider">-------------</div>
+
+    <div class="column column-right">
+      <!-- 右側カード（必要に応じて追加） -->
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+      <div class="card"><img src="img/CO.png"><div class="caption"></div></div>
+    </div>
+  </div>
+</body>
+</html>

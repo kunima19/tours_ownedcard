@@ -301,11 +301,11 @@
                 const img = document.createElement("img");
 
                 let imgName = "";
-                if (card.rare === "SSR") imgName = "ssr";
-                else if (card.rare === "SR") imgName = "sr";
-                else if (card.rare === "R") imgName = "r";
-                else if (card.rare === "N") imgName = "n";
-                else imgName = "tr";
+                if (card.rare === "SSR") imgName = "SSR";
+                else if (card.rare === "SR") imgName = "SR";
+                else if (card.rare === "R") imgName = "R";
+                else if (card.rare === "N") imgName = "N";
+                else imgName = "TR";
 
                 if (card.owned) imgName += "_owned";
 

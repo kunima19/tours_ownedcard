@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>第5弾所持状況</title>
+    <style>
+        body {
+            font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+            background: linear-gradient(to bottom right, #fdfdfd, #f4f6fa);
+            padding: 20px;
+            color: #333;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            width: 150px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .card img {
+            width: 100%;
+            border-radius: 6px;
+        }
+        .card p {
+            margin-top: 6px;
+            font-size: 11px;
+            line-height: 1.3em;
+            word-wrap: break-word;
+            white-space: normal;
+            color: #444;
+        }
+        /* ====== フィルター枠 ====== */
+        .filter-box {
+            margin-bottom: 15px;
+            padding: 15px 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .filter-box strong {
+            color: #333;
+        }
+        button {
+            margin-right: 8px;
+            padding: 5px 10px;
+            font-size: 13px;
+            background: #8dbbff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #8dbbff5c;
+        }
+        button:active {
+            background: #8dbbff5c;
+        }
+        #nameSearch {
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 13px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #nameSearch:focus {
+            border-color: #8dbbff;
+            box-shadow: 0 0 4px #8dbbff;
+            outline: none;
+        }
+        /* ====== 所持率カウンター ====== */
+        #ownedCount {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            text-align: right;
+            font-size: 22px;
+            line-height: 1.3em;
+            color: #222;
+        }
+        #ownedPercent {
+            font-weight: bold;
+            font-size: 28px;
+            color: #8dbbff;
+        }
+        #ownedText {
+            font-size: 17px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>第5弾</h1>
+    <!--===== 検索フィルタ =====-->
+    <div class="filter-box">
+        <strong>カード番号・カード名検索</strong><br>
+        <input type="text" id="nameSearch" placeholder="例：IMT-05-001 エターナルブライト" style="width:250px;">
+        <br><br>
+
+        <strong>レアリティ絞り込み</strong><br>
+        <label><input type="checkbox" class="rare" value="SSR"> SSR</label>
+        <label><input type="checkbox" class="rare" value="SR"> SR</label>
+        <label><input type="checkbox" class="rare" value="R"> R</label>
+        <label><input type="checkbox" class="rare" value="N"> N</label>
+        <label><input type="checkbox" class="rare" value="CO"> CO</label>
+        <label><input type="checkbox" class="rare" value="TR"> TR</label>
+        <br><br>
+
+        <strong>種類で絞り込み</strong><br>
+        <label><input type="checkbox" class="genre" value="costume"> コスチューム</label>
+        <label><input type="checkbox" class="genre" value="accessory"> アクセサリー</label>
+        <label><input type="checkbox" class="genre" value="support"> サポート</label>
+        <label><input type="checkbox" class="genre" value="appeal"> SPアピール</label>
+        <label><input type="checkbox" class="genre" value="direction"> 演出セット</label>
+        <br><br>
+
+        <strong>アイドル絞り込み</strong><br>
+        <label><input type="checkbox" class="idol" value="天海春香"> 天海春香</label>
+        <label><input type="checkbox" class="idol" value="如月千早"> 如月千早</label>
+        <label><input type="checkbox" class="idol" value="星井美希"> 星井美希</label>
+        <label><input type="checkbox" class="idol" value="水瀬伊織"> 水瀬伊織</label><br>
+        <label><input type="checkbox" class="idol" value="島村卯月"> 島村卯月</label>
+        <label><input type="checkbox" class="idol" value="渋谷凛"> 渋谷凛　</label>
+        <label><input type="checkbox" class="idol" value="本田未央"> 本田未央</label>
+        <label><input type="checkbox" class="idol" value="神崎蘭子"> 神崎蘭子</label><br>
+        <label><input type="checkbox" class="idol" value="春日未来"> 春日未来</label>
+        <label><input type="checkbox" class="idol" value="最上静香"> 最上静香</label>
+        <label><input type="checkbox" class="idol" value="伊吹翼"> 伊吹翼　</label>
+        <label><input type="checkbox" class="idol" value="真壁瑞希"> 真壁瑞希</label><br>
+        <label><input type="checkbox" class="idol" value="天道輝"> 天道輝　</label>
+        <label><input type="checkbox" class="idol" value="桜庭薫"> 桜庭薫　</label>
+        <label><input type="checkbox" class="idol" value="柏木翼"> 柏木翼　</label>
+        <label><input type="checkbox" class="idol" value="硲道夫"> 硲道夫</label><br>
+        <label><input type="checkbox" class="idol" value="櫻木真乃"> 櫻木真乃</label>
+        <label><input type="checkbox" class="idol" value="風野灯織"> 風野灯織</label>
+        <label><input type="checkbox" class="idol" value="八宮めぐる"> 八宮めぐる</label>
+        <label><input type="checkbox" class="idol" value="小宮果穂"> 小宮果穂</label><br>
+        <label><input type="checkbox" class="idol" value="花海咲季"> 花海咲季</label>
+        <label><input type="checkbox" class="idol" value="月村手毬"> 月村手毬</label>
+        <label><input type="checkbox" class="idol" value="藤田ことね"> 藤田ことね</label>
+        <label><input type="checkbox" class="idol" value="紫雲清夏"> 紫雲清夏</label><br>
+        <label><input type="checkbox" class="idol" value="袖屋璃空"> 袖屋璃空</label>
+        <br><br>
+
+        <strong>所持状況</strong><br>
+        <button id="btnAll">カード全表示</button>
+        <button id="btnOwned">所持済みカードのみ表示</button>
+        <button id="btnUnowned">未所持カードのみ表示</button>
+
+        <div id="ownedCount" style="
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            text-align: right;
+            font-size: 25px;
+            line-height: 1.3em;
+        ">
+            <div id="ownedPercent" style="font-weight:bold; font-size:30px;"></div>
+            <div id="ownedText"></div>
+        </div>
+
+    </div>
+
+    <div class="card-container" id="cardArea"></div>
+
+    <script>
+        const cards = [
+            {no:"IMT-05-001",name:"エターナルブライト",rare:"SSR",genre:"costume",idol:"水瀬伊織",owned:false},			
+            {no:"IMT-05-002",name:"エターナルブライト",rare:"SSR",genre:"costume",idol:"小宮果穂",owned:false},			
+            {no:"IMT-05-003",name:"エターナルブライト",rare:"SSR",genre:"costume",idol:"紫雲清夏",owned:false},			
+            {no:"IMT-05-004",name:"ホワイトナイトダンス",rare:"SSR",genre:"costume",idol:"月村手毬",owned:false},			
+            {no:"IMT-05-005",name:"ホワイトナイトダンス",rare:"SSR",genre:"costume",idol:"硲道夫",owned:false},			
+            {no:"IMT-05-006",name:"アテンダントツアラー",rare:"SSR",genre:"costume",idol:"小宮果穂",owned:false},			
+            {no:"IMT-05-007",name:"アテンダントツアラー",rare:"SSR",genre:"costume",idol:"紫雲清夏",owned:false},			
+            {no:"IMT-05-008",name:"花蝶爛漫",rare:"SR",genre:"costume",idol:"小宮果穂",owned:false},			
+            {no:"IMT-05-009",name:"モフモフビースト",rare:"SR",genre:"costume",idol:"島村卯月",owned:true},			
+            {no:"IMT-05-010",name:"モフモフビースト",rare:"SR",genre:"costume",idol:"天道輝",owned:true},			
+            {no:"IMT-05-011",name:"シルクハット (白)",rare:"SR",genre:"accessory",idol:"神崎蘭子",owned:true},			
+            {no:"IMT-05-012",name:"エターナルオーナメント",rare:"R",genre:"accessory",idol:"島村卯月",owned:true},			
+            {no:"IMT-05-013",name:"マスカレードマスク (白)",rare:"R",genre:"accessory",idol:"風野灯織",owned:true},			
+            {no:"IMT-05-014",name:"スペードペイント (黒)",rare:"R",genre:"accessory",idol:"真壁瑞希",owned:true},			
+            {no:"IMT-05-015",name:"アニバーサリーバルーン",rare:"R",genre:"accessory",idol:"本田未央",owned:true},			
+            {no:"IMT-05-016",name:"花丸ペイント (金)",rare:"R",genre:"accessory",idol:"如月千早",owned:true},			
+            {no:"IMT-05-017",name:"うさみみ (白)",rare:"N",genre:"accessory",idol:"水瀬伊織",owned:false},			
+            {no:"IMT-05-018",name:"スクウェアサングラス (オレンジ)",rare:"N",genre:"accessory",idol:"桜庭薫",owned:true},			
+            {no:"IMT-05-019",name:"蝶の羽 (黄アゲハ)",rare:"N",genre:"accessory",idol:"伊吹翼",owned:true},			
+            {no:"IMT-05-020",name:"サクラネイル",rare:"N",genre:"accessory",idol:"櫻木真乃",owned:true},			
+            {no:"IMT-05-021",name:"小宮果穂、参上！",rare:"SSR",genre:"support",idol:"小宮果穂",owned:true},			
+            {no:"IMT-05-022",name:"小宮果穂、参上！",rare:"SSR",genre:"support",idol:"小宮果穂",owned:false},			
+            {no:"IMT-05-023",name:"Campus mode!!",rare:"SSR",genre:"support",idol:"紫雲清夏",owned:false},			
+            {no:"IMT-05-024",name:"Campus mode!!",rare:"SSR",genre:"support",idol:"紫雲清夏",owned:false},			
+            {no:"IMT-05-025",name:"twinkle☆star",rare:"SSR",genre:"support",idol:"星井美希",owned:false},			
+            {no:"IMT-05-026",name:"Blooming Stage♪",rare:"SSR",genre:"support",idol:"櫻木真乃",owned:false},			
+            {no:"IMT-05-027",name:"Prologue",rare:"SR",genre:"support",idol:"真壁瑞希",owned:true},			
+            {no:"IMT-05-028",name:"木漏れ日の中で",rare:"SR",genre:"support",idol:"硲道夫",owned:true},			
+            {no:"IMT-05-029",name:"ツバサ、舞う",rare:"SR",genre:"support",idol:"八宮めぐる",owned:true},			
+            {no:"IMT-05-030",name:"sing for fun",rare:"SR",genre:"support",idol:"花海咲季",owned:true},			
+            {no:"IMT-05-031",name:"ディスカッション！",rare:"R",genre:"support",idol:"島村卯月",owned:true},			
+            {no:"IMT-05-032",name:"ディスカッション！",rare:"R",genre:"support",idol:"最上静香",owned:true},			
+            {no:"IMT-05-033",name:"ブレイクタイム",rare:"R",genre:"support",idol:"柏木翼",owned:true},			
+            {no:"IMT-05-034",name:"ブレイクタイム",rare:"R",genre:"support",idol:"硲道夫",owned:true},			
+            {no:"IMT-05-035",name:"春の陽気に誘われて",rare:"R",genre:"support",idol:"如月千早",owned:true},			
+            {no:"IMT-05-036",name:"日進月歩",rare:"R",genre:"support",idol:"春日未来",owned:true},			
+            {no:"IMT-05-037",name:"Stroll",rare:"R",genre:"support",idol:"月村手毬",owned:true},			
+            {no:"IMT-05-038",name:"調子、ばっちりでした！",rare:"R",genre:"support",idol:"藤田ことね",owned:true},			
+            {no:"IMT-05-039",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"天海春香",owned:true},			
+            {no:"IMT-05-040",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"如月千早",owned:true},			
+            {no:"IMT-05-041",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"星井美希",owned:true},			
+            {no:"IMT-05-042",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"渋谷凛",owned:true},			
+            {no:"IMT-05-043",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"本田未央",owned:true},			
+            {no:"IMT-05-044",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"神崎蘭子",owned:true},			
+            {no:"IMT-05-045",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"春日未来",owned:true},			
+            {no:"IMT-05-046",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"伊吹翼",owned:true},			
+            {no:"IMT-05-047",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"真壁瑞希",owned:true},			
+            {no:"IMT-05-048",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"天道輝",owned:true},			
+            {no:"IMT-05-049",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"桜庭薫",owned:true},			
+            {no:"IMT-05-050",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"柏木翼",owned:true},			
+            {no:"IMT-05-051",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"風野灯織",owned:true},			
+            {no:"IMT-05-052",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"八宮めぐる",owned:true},			
+            {no:"IMT-05-053",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"小宮果穂",owned:true},			
+            {no:"IMT-05-054",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"花海咲季",owned:true},			
+            {no:"IMT-05-055",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"月村手毬",owned:true},			
+            {no:"IMT-05-056",name:"フルーツパーティ！",rare:"N",genre:"support",idol:"藤田ことね",owned:true},			
+            {no:"IMT-05-057",name:"ライブサポート",rare:"N",genre:"support",idol:"小宮果穂",owned:true},			
+            {no:"IMT-05-058",name:"ライブサポート",rare:"N",genre:"support",idol:"紫雲清夏",owned:true},			
+            {no:"IMT-05-059",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"天海春香",owned:false},			
+            {no:"IMT-05-060",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"如月千早",owned:false},			
+            {no:"IMT-05-061",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"星井美希",owned:false},			
+            {no:"IMT-05-062",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"渋谷凛",owned:true},			
+            {no:"IMT-05-063",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"本田未央",owned:false},			
+            {no:"IMT-05-064",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"神崎蘭子",owned:true},			
+            {no:"IMT-05-065",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"春日未来",owned:true},			
+            {no:"IMT-05-066",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"伊吹翼",owned:true},			
+            {no:"IMT-05-067",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"真壁瑞希",owned:true},			
+            {no:"IMT-05-068",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"天道輝",owned:true},			
+            {no:"IMT-05-069",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"桜庭薫",owned:true},			
+            {no:"IMT-05-070",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"柏木翼",owned:true},			
+            {no:"IMT-05-071",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"風野灯織",owned:true},			
+            {no:"IMT-05-072",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"八宮めぐる",owned:false},			
+            {no:"IMT-05-073",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"小宮果穂",owned:true},			
+            {no:"IMT-05-074",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"花海咲季",owned:true},			
+            {no:"IMT-05-075",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"月村手毬",owned:true},			
+            {no:"IMT-05-076",name:"フルーツパーティ！",rare:"CO",genre:"support",idol:"藤田ことね",owned:false},			
+            {no:"IMT-05-077",name:"蒼き高唱",rare:"SR",genre:"appeal",idol:"渋谷凛",owned:false},			
+            {no:"IMT-05-078",name:"翼を胸に",rare:"SR",genre:"appeal",idol:"櫻木真乃",owned:true},			
+            {no:"IMT-05-079",name:"Pretty face♡",rare:"R",genre:"appeal",idol:"伊吹翼",owned:true},			
+            {no:"IMT-05-080",name:"Quiet Charm",rare:"R",genre:"appeal",idol:"桜庭薫",owned:true},			
+            {no:"IMT-05-081",name:"ネオンスター",rare:"N",genre:"appeal",idol:"水瀬伊織",owned:true},			
+            {no:"IMT-05-082",name:"Toom Boom!",rare:"N",genre:"appeal",idol:"島村卯月",owned:true},			
+            {no:"IMT-05-083",name:"サクラ✿エフェクト",rare:"N",genre:"appeal",idol:"花海咲季",owned:true},			
+            {no:"IMT-05-084",name:"演出セット：スプリング",rare:"R",genre:"direction",idol:"最上静香",owned:true},			
+            {no:"IMT-05-085",name:"デイアフターデイAMCG",rare:"SSR",genre:"costume",idol:"天海春香",owned:false},			
+            {no:"IMT-05-086",name:"ワルツ・ド・ペガサス",rare:"SSR",genre:"costume",idol:"島村卯月",owned:false},			
+            {no:"IMT-05-087",name:"パビリオンファンタジア",rare:"SSR",genre:"costume",idol:"春日未来",owned:false},			
+            {no:"IMT-05-088",name:"ノーブルプライド",rare:"SSR",genre:"costume",idol:"天道輝",owned:false},			
+            {no:"IMT-05-089",name:"ロマンチカフェザー",rare:"SSR",genre:"costume",idol:"櫻木真乃",owned:false},			
+            {no:"IMT-05-090",name:"アテンダントツアラー",rare:"SSR",genre:"costume",idol:"花海咲季",owned:false},	
+        ];
+
+        let ownedFilter = null;
+
+        function displayCards() {
+            const area = document.getElementById("cardArea");
+            area.innerHTML = "";
+
+            const keyword = document.getElementById("nameSearch").value.toLowerCase();
+            const rareChecks  = [...document.querySelectorAll(".rare:checked")].map(c => c.value);
+            const genreChecks = [...document.querySelectorAll(".genre:checked")].map(c => c.value);
+            const idolChecks  = [...document.querySelectorAll(".idol:checked")].map(c => c.value);
+
+            cards.forEach(card => {
+                if (keyword !== "") {
+                    const target = (card.no + " " + card.name).toLowerCase();
+                    if (!target.includes(keyword)) return;
+                }
+                if (rareChecks.length > 0 && !rareChecks.includes(card.rare)) return;
+                if (genreChecks.length > 0 && !genreChecks.includes(card.genre)) return;
+                if (idolChecks.length > 0 && !idolChecks.includes(card.idol)) return;
+                if (ownedFilter !== null && card.owned !== ownedFilter) return;
+
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "card";
+
+                const img = document.createElement("img");
+
+                let imgName = "";
+                if (card.rare === "SSR") imgName = "SSR";
+                else if (card.rare === "SR") imgName = "SR";
+                else if (card.rare === "R") imgName = "R";
+                else if (card.rare === "N") imgName = "N";
+                else if (card.rare === "CO") imgName = "CO";
+                else imgName = "TR";
+
+                if (card.owned) imgName += "_owned";
+
+                img.src = `img/${imgName}.png`;
+
+                const name = document.createElement("p");
+                name.innerText = `${card.no}\n${card.name}\n（${card.idol}）`;
+
+                cardDiv.appendChild(img);
+                cardDiv.appendChild(name);
+                area.appendChild(cardDiv);
+            });
+            updateOwnedCount();
+        }
+
+        document.getElementById("nameSearch").addEventListener("keyup", displayCards);
+        document.querySelectorAll(".rare, .genre, .idol")
+            .forEach(check => check.addEventListener("change", displayCards));
+
+        document.getElementById("btnOwned").addEventListener("click", () => { ownedFilter = true; displayCards(); });
+        document.getElementById("btnUnowned").addEventListener("click", () => { ownedFilter = false; displayCards(); });
+        document.getElementById("btnAll").addEventListener("click", () => { ownedFilter = null; displayCards(); });
+
+        displayCards();
+        function updateOwnedCount() {
+            const totalAll = cards.length;
+            const ownedAll = cards.filter(c => c.owned).length;
+
+            // TR以外
+            const nonTR = cards.filter(c => c.rare !== "TR");
+            const totalNonTR = nonTR.length;
+            const ownedNonTR = nonTR.filter(c => c.owned).length;
+
+            // TRのみ
+            const tr = cards.filter(c => c.rare === "TR");
+            const totalTR = tr.length;
+            const ownedTR = tr.filter(c => c.owned).length;
+
+            const percent = ((ownedAll / totalAll) * 100).toFixed(1);
+
+            document.getElementById("ownedPercent").innerText = `${percent}%`;
+            document.getElementById("ownedText").innerText =
+                `${ownedNonTR}枚／${totalNonTR}枚（TR: ${ownedTR}枚／${totalTR}枚）`;
+        }
+
+    </script>
+</body>
+</html>
